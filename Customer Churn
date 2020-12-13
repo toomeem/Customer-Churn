@@ -1,1 +1,30 @@
+import numpy as np
+import pandas as pd 
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold
+from sklearn.metrics import precision_score, recall_score
+cc=pd.read_csv('customer_churn.csv')
+def binary_bool(series):#converts values to bool
+    series.replace(0,False,inplace=True)
+    series.replace('No',False,inplace=True)
+    series.replace('No phone service',False,inplace=True)
+    series.replace('No internet service',False,inplace=True)
+    series.replace(1,True,inplace=True)
+    series.replace('Yes',True,inplace=True)
+cc['Male']=cc['gender']=='Male'
+cc.drop('gender',inplace=True,axis=1)
+cc.drop('customerID',inplace=True,axis=1)
+''
+tf_cols=['SeniorCitizen','Partner','Dependents','PhoneService','MultipleLines','InternetService','OnlineSecurity','OnlineBackup','DeviceProtection','TechSupport','StreamingTV','StreamingMovies','PaperlessBilling','Churn']
+for i in tf_cols:#runs binary_bool on all applicable columns
+    binary_bool(cc[i])
 
+#['SeniorCitizen','Partner','Dependents','PhoneService']]#,'MultipleLines','OnlineSecurity','OnlineBackup','DeviceProtection','TechSupport','StreamingTV','StreamingMovies','PaperlessBilling']].values
+x=cc[['SeniorCitizen','Partner','Dependents','PhoneService']].values
+y=cc['Churn'].values
+x_train,x_test,y_train,y_test=train_test_split(x, y)
+model=DecisionTreeClassifier()
+model.fit(x_train,y_train)
+print(model.predict([y_test]))
